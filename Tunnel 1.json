@@ -1,0 +1,161 @@
+{
+  "name": "Tunnel 1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bdf66441-edb4-4d83-9104-420df12b22f1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b2ebc62b-9edd-489b-9e43-b1ba87032484",
+      "name": "Webhook",
+      "webhookId": "bdf66441-edb4-4d83-9104-420df12b22f1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c6eb536b-26fe-46d8-8f9d-71ac5c6613c5",
+              "name": "Name",
+              "value": "={{ $json.body.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "eff12dce-d603-4a49-b5b2-c0a12ebc6f98",
+              "name": "Email",
+              "value": "={{ $json.body.Email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4a40cf84-676e-49f4-abfc-14067b85a782",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "nnekaezeh3@gmail.com",
+        "subject": "=Thanks for reaching out, {{ $json.Name }}!",
+        "message": "=Hi {{ $json.Name }},\n\nThank you for getting in touch with us! We've received your inquiry and we will get back to you shortly.\n\n\nWe appreciate you reaching out, and we're looking forward to connecting with you soon.\n\nBest regards,\nThe Team\n\n---\nThis is an automated confirmation. A member of our team will follow up personally shortly.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "4029e332-b3fc-470e-aee3-0a842aec57cc",
+      "name": "Send a message",
+      "webhookId": "ba222e75-fb7b-429f-b1ff-90abace7d319",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LGu3sEFycv25K3IB",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "nneka1ezeh.app.n8n.cloud",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+            "content-length": "52",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,de;q=0.7",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "2001:4bc9:b00d:f4dd:d543:aac1:f4df:78ef",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "AT",
+            "cf-ray": "a3be6b218eeb0b0f-VIE",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "origin": "https://hoppscotch.io",
+            "priority": "u=1, i",
+            "referer": "https://hoppscotch.io/",
+            "sec-ch-ua": "\"Chromium\";v=\"152\", \"Not?A_Brand\";v=\"24\", \"Google Chrome\";v=\"152\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "2001:4bc9:b00d:f4dd:d543:aac1:f4df:78ef, 104.23.162.96",
+            "x-forwarded-host": "nneka1ezeh.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-71-84c76fc7d-vjdwg",
+            "x-is-trusted": "yes",
+            "x-real-ip": "2001:4bc9:b00d:f4dd:d543:aac1:f4df:78ef"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Name": "Nneka Ezeh",
+            "Email": "nnekaezeh3@gmail.com"
+          },
+          "webhookUrl": "https://nneka1ezeh.app.n8n.cloud/webhook-test/bdf66441-edb4-4d83-9104-420df12b22f1",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ee3d2118-4ded-4fa3-b08f-3f22c8b5ed80",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed9710e29edb3358b828d34a78559ea7261c1d5c4bfa6af842c43b93e69d02df"
+  },
+  "nodeGroups": [],
+  "id": "nyiy7ZcM736U0YHg",
+  "tags": []
+}

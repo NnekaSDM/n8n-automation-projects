@@ -1,0 +1,932 @@
+{
+  "name": "Lead_Qualifier part 2 AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-qualifier",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -928,
+        64
+      ],
+      "id": "9a125e3b-e427-44b9-9e44-abf737525a3f",
+      "name": "form_submitted",
+      "webhookId": "7da0b01c-5c8a-4115-aaca-e42dbb104bec"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6735b41b-1850-484c-b1d0-2158745652f8",
+              "name": "name",
+              "value": "={{ $json.body.data.fields[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "6d8db284-e666-476b-803d-43664a1fbd5f",
+              "name": "email",
+              "value": "={{ $json.body.data.fields[1].value }}",
+              "type": "string"
+            },
+            {
+              "id": "a72c139e-799e-4489-aa9e-25f2c8109ccd",
+              "name": "Budget",
+              "value": "={{ $json.body.data.fields[2].value }}",
+              "type": "number"
+            },
+            {
+              "id": "f629844e-a974-4318-acad-1b2ec21ea055",
+              "name": "Message",
+              "value": "={{ $json.body.data.fields[3].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -704,
+        48
+      ],
+      "id": "228fc240-0cce-4fc2-a143-5417723782ac",
+      "name": "extract_data"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Email address missing"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -48
+      ],
+      "id": "86fcaca8-7968-4751-963e-d2d3f8f9905a",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE",
+          "mode": "list",
+          "cachedResultName": "Lead-Qualifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Budget": "={{ $json.Budget }}",
+            "Type ": "Standard",
+            "Date": "={{ $now.format('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type ",
+              "displayName": "Type ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        48
+      ],
+      "id": "ba21eaff-c668-411d-80c8-742b0587da73",
+      "name": "save_lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ppyg88FWvtCnry72",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=Your Rental Inquiry - Nneka Properties",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Inquiry Update - Nneka Properties</title>\n</head>\n<body style=\"margin: 0; padding: 0; background-color: #f4f5f7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;\">\n  <table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"background-color: #f4f5f7; padding: 40px 15px;\">\n    <tr>\n      <td align=\"center\">\n        <!-- Main Email Container -->\n        <table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"max-width: 580px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb;\">\n          \n          <!-- Brand Header -->\n          <tr>\n            <td style=\"background-color: #111827; padding: 32px 40px; text-align: left; border-bottom: 3px solid #c5a059;\">\n              <span style=\"font-size: 20px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #ffffff; margin: 0; display: block;\">\n                Nneka Properties\n              </span>\n              <span style=\"font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #c5a059; margin-top: 4px; display: block; font-weight: 500;\">\n                VIP Portfolio & Leasing\n              </span>\n            </td>\n          </tr>\n\n          <!-- Message Body -->\n          <tr>\n            <td style=\"padding: 40px; color: #374151; font-size: 15px; line-height: 1.65;\">\n              <p style=\"margin: 0 0 18px 0; font-size: 16px; font-weight: 600; color: #111827;\">\n                Dear {{ $json.Name }},\n              </p>\n\n              <p style=\"margin: 0 0 16px 0;\">\n                Thank you for your inquiry. Regarding your monthly rent budget of \n                <strong style=\"color: #111827;\">{{ $json.Budget.toLocaleString('en-US', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }) }}</strong>, \n                our <em>Nneka Properties VIP portfolio</em> currently requires a higher minimum threshold.\n              </p>\n\n              <p style=\"margin: 0 0 28px 0; color: #4b5563;\">\n                We recommend reviewing our FAQ page and Getting Started resources on our website for standard leasing criteria and helpful market tips.\n              </p>\n\n              <!-- Action Links -->\n              <table role=\"presentation\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin: 0 0 32px 0;\">\n                <tr>\n                  <td align=\"center\" style=\"border-radius: 6px; background-color: #111827;\">\n                    <a href=\"https://nnekaproperties.com/leasing-criteria\" target=\"_blank\" style=\"font-size: 13px; font-weight: 600; color: #ffffff; text-decoration: none; padding: 12px 20px; display: inline-block; border-radius: 6px; letter-spacing: 0.3px;\">\n                      View Leasing Criteria\n                    </a>\n                  </td>\n                  <td width=\"12\"></td>\n                  <td align=\"center\" style=\"border-radius: 6px; border: 1px solid #d1d5db;\">\n                    <a href=\"https://nnekaproperties.com/faq\" target=\"_blank\" style=\"font-size: 13px; font-weight: 600; color: #374151; text-decoration: none; padding: 11px 19px; display: inline-block; border-radius: 6px;\">\n                      Read FAQs\n                    </a>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- Sign-off -->\n              <p style=\"margin: 0; padding-top: 16px; border-top: 1px solid #f3f4f6; color: #6b7280; font-size: 14px;\">\n                Best regards,<br>\n                <strong style=\"color: #111827;\">Agent Success</strong><br>\n                Nneka Properties\n              </p>\n            </td>\n          </tr>\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"background-color: #fafafa; padding: 20px 40px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #9ca3af;\">\n              <p style=\"margin: 0;\">\n                © 2026 Nneka Properties. All rights reserved.\n              </p>\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        48
+      ],
+      "id": "105f5d2b-e35d-4e0d-8266-f25f08b59e97",
+      "name": "auto_reply_lead",
+      "webhookId": "1c305c30-03c4-46a2-9384-984b161b34bf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LGu3sEFycv25K3IB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AB7E8GR17",
+          "mode": "list",
+          "cachedResultName": "all-new-workspace"
+        },
+        "text": "=New VIP Lead\n-name: {{ $json.name }}\n-email: {{ $json.email }}\n-budget: {{ $json.Budget }}\n-message: {{ $json.Message }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        16,
+        240
+      ],
+      "id": "0727ecff-43dc-4ffb-b107-c7761887d86a",
+      "name": "notify_sales",
+      "webhookId": "2a7092a5-80af-4a1c-ae80-326cea02b8be",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "hvAacv1J9dOPyCzS",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Budget }}",
+                    "rightValue": 20000000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    },
+                    "id": "6537846b-66c7-4bb4-9c0a-7d831ca9a5ae"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Standard"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "49a673d9-b9b2-406e-ac68-c96c5ff4f012",
+                    "leftValue": "={{ $json.Budget }}",
+                    "rightValue": 20000000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VIP"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        144
+      ],
+      "id": "37554528-1c2a-4ed2-826a-022c85d4d31b",
+      "name": "check_budget"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "02df93e0-2a16-415c-9e1b-4982daaa6a14",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -480,
+        48
+      ],
+      "id": "23f78e7b-70ea-4579-92aa-169f18e1c289",
+      "name": "email_is_empty?"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-qualifier",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -752,
+        592
+      ],
+      "id": "f1e38bdf-cc36-4393-8b68-0bce9adc5764",
+      "name": "form_submitted1",
+      "webhookId": "7da0b01c-5c8a-4115-aaca-e42dbb104bec"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6735b41b-1850-484c-b1d0-2158745652f8",
+              "name": "name",
+              "value": "={{ $json.body.data.fields[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "6d8db284-e666-476b-803d-43664a1fbd5f",
+              "name": "email",
+              "value": "={{ $json.body.data.fields[1].value }}",
+              "type": "string"
+            },
+            {
+              "id": "a72c139e-799e-4489-aa9e-25f2c8109ccd",
+              "name": "Budget",
+              "value": "={{ $json.body.data.fields[2].value }}",
+              "type": "number"
+            },
+            {
+              "id": "f629844e-a974-4318-acad-1b2ec21ea055",
+              "name": "Message",
+              "value": "={{ $json.body.data.fields[3].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -528,
+        592
+      ],
+      "id": "1f1298f6-5e38-4a1a-af42-7de371acf9ad",
+      "name": "extract_data1"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Email address missing"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        480
+      ],
+      "id": "02da5bc6-a6c9-4596-b1dc-85436a435092",
+      "name": "Stop and Error1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "02df93e0-2a16-415c-9e1b-4982daaa6a14",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -336,
+        592
+      ],
+      "id": "75177947-ca82-44ee-9e20-5798b7a87f79",
+      "name": "email_is_empty?1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=New Inquire for Nneka Properties:\n-Name:{{ $json.name }}\n-Email:{{ $json.email }}\n-Budget:{{ $json.Budget }}\n-Message:{{ $json.Message }}\n\nToday's date is {{ $now.format('yyyy-MM-dd') }}",
+        "options": {
+          "systemMessage": "=# Identity\nYou're a lead qualifier for Nneka Properties.\n\n# Goal\nClassify incoming leads as VIP or Standard based on their budget.\n\n\n### VIP\nBudget is from N35m (Thirty Five Million Naira) and above.\n\n### Standard\nBudget is below N35m (Thirty Five Million Naira)\n\n# Instructions\nSend Slack message ONLY when lead is VIP otherwise log the lead and send them email.\n\n# Tools\n- log lead\n- send_slack\n- messge_lead"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -128,
+        688
+      ],
+      "id": "e8f91edc-063e-473b-a209-3c968acfd1c1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        976
+      ],
+      "id": "a0339fd0-9921-4fbf-a485-a9096516cc00",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TwL300jjNth5sdBC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool ONLY when you need a Slack message to the sales team of a new VIP lead.",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AB7E8GR17",
+          "mode": "list",
+          "cachedResultName": "sales"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', `Generate a Slack message for sales`, 'string') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.7,
+      "position": [
+        144,
+        960
+      ],
+      "id": "c018fec7-1aec-4a3e-9be2-7a72ab42a6da",
+      "name": "Send_Slack",
+      "webhookId": "d395ab88-204d-4fa8-b783-0be10b09b07a",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "hvAacv1J9dOPyCzS",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to save a Standard Lead to the spreadsheet.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE",
+          "mode": "list",
+          "cachedResultName": "Lead-Qualifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', `the name of the lead`, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', `the email address of the lead`, 'string') }}",
+            "Budget": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Budget', `the budget of the lead`, 'string') }}",
+            "Type ": "=standard",
+            "Date": "={{ $now.format('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type ",
+              "displayName": "Type ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        960
+      ],
+      "id": "830e6eb7-0810-402e-ac64-5c47420062e1",
+      "name": "save_lead1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ppyg88FWvtCnry72",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to send email to Standard Leads. Requires: Budget, Name and Date",
+        "sendTo": "={{ $fromAI('To', ``, 'string') }}",
+        "subject": "Your Rental Inquiry - Nneka Properties",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Inquiry Update - Nneka Properties</title>\n</head>\n<body style=\"margin: 0; padding: 0; background-color: #f4f5f7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;\">\n  <table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"background-color: #f4f5f7; padding: 40px 15px;\">\n    <tr>\n      <td align=\"center\">\n        <!-- Main Email Container -->\n        <table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"max-width: 580px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb;\">\n          \n          <!-- Brand Header -->\n          <tr>\n            <td style=\"background-color: #111827; padding: 32px 40px; text-align: left; border-bottom: 3px solid #c5a059;\">\n              <span style=\"font-size: 20px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #ffffff; margin: 0; display: block;\">\n                Nneka Properties\n              </span>\n              <span style=\"font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #c5a059; margin-top: 4px; display: block; font-weight: 500;\">\n                VIP Portfolio & Leasing\n              </span>\n            </td>\n          </tr>\n\n          <!-- Message Body -->\n          <tr>\n            <td style=\"padding: 40px; color: #374151; font-size: 15px; line-height: 1.65;\">\n              <p style=\"margin: 0 0 18px 0; font-size: 16px; font-weight: 600; color: #111827;\">\n                Dear {{ $fromAI('Name', ``, 'string') }},\n              </p>\n\n              <p style=\"margin: 0 0 16px 0;\">\n                Thank you for your inquiry. Regarding your monthly rent budget of \n                <strong style=\"color: #111827;\">{{ $fromAI('Budget', ``, 'number') }}</strong>, \n                our <em>Nneka Properties VIP portfolio</em> currently requires a higher minimum threshold.\n              </p>\n\n              <p style=\"margin: 0 0 28px 0; color: #4b5563;\">\n                We recommend reviewing our FAQ page and Getting Started resources on our website for standard leasing criteria and helpful market tips.\n              </p>\n\n              <!-- Action Links -->\n              <table role=\"presentation\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin: 0 0 32px 0;\">\n                <tr>\n                  <td align=\"center\" style=\"border-radius: 6px; background-color: #111827;\">\n                    <a href=\"https://nnekaproperties.com/leasing-criteria\" target=\"_blank\" style=\"font-size: 13px; font-weight: 600; color: #ffffff; text-decoration: none; padding: 12px 20px; display: inline-block; border-radius: 6px; letter-spacing: 0.3px;\">\n                      View Leasing Criteria\n                    </a>\n                  </td>\n                  <td width=\"12\"></td>\n                  <td align=\"center\" style=\"border-radius: 6px; border: 1px solid #d1d5db;\">\n                    <a href=\"https://nnekaproperties.com/faq\" target=\"_blank\" style=\"font-size: 13px; font-weight: 600; color: #374151; text-decoration: none; padding: 11px 19px; display: inline-block; border-radius: 6px;\">\n                      Read FAQs\n                    </a>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- Sign-off -->\n              <p style=\"margin: 0; padding-top: 16px; border-top: 1px solid #f3f4f6; color: #6b7280; font-size: 14px;\">\n                Best regards,<br>\n                <strong style=\"color: #111827;\">Agent Success</strong><br>\n                Nneka Properties\n              </p>\n            </td>\n          </tr>\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"background-color: #fafafa; padding: 20px 40px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #9ca3af;\">\n              <p style=\"margin: 0;\">\n                © 2026 Nneka Properties. All rights reserved.\n              </p>\n                This is an automated response regarding your inquiry on {{ $fromAI('Date', ``, 'string') }}\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        960
+      ],
+      "id": "c7a3fac3-0496-4527-a2f0-af0a4578bd86",
+      "name": "Message_lead",
+      "webhookId": "2fcff708-4bce-49b8-a3ff-4f4f9128c603",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LGu3sEFycv25K3IB",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "form_submitted": [
+      {
+        "json": {
+          "headers": {
+            "host": "nneka1ezeh.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1352",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "baggage": "sentry-environment=production,sentry-release=005f3d3fc6d44e1f888de668e0c87cff264874dc,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=b9553e409b5d40efbce12cac6050c148,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.18327696653591252,sentry-sample_rate=0",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.62.78",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "BE",
+            "cf-ray": "a3fc974ba9f913f4-CDG",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "b9553e409b5d40efbce12cac6050c148-99e234b342ef1474-0",
+            "x-forwarded-for": "34.96.62.78, 104.23.229.94",
+            "x-forwarded-host": "nneka1ezeh.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-71-84c76fc7d-vjdwg",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.62.78"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "812346f8-022a-4ffd-af87-d4650ecd4819",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2026-09-23T21:20:01.764Z",
+            "data": {
+              "responseId": "bZGyDK0",
+              "submissionId": "bZGyDK0",
+              "respondentId": "ob8Kk9X",
+              "formId": "VLgZQa",
+              "formName": "Property Inquiry",
+              "createdAt": "2026-09-23T21:20:01.000Z",
+              "submissionPdfUrl": "https://api.tally.so/forms/VLgZQa/submissions/bZGyDK0/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJiWkd5REswIiwiZm9ybUlkIjoiVkxnWlFhIiwiaWF0IjoxNzkwMTk4NDAxfQ.lZ9_dgjP4negUTuyNiO0M5lJnHO5ACzczHw2J0IRFlE&signature=53f3cf270a6975e07c3568c259aee18061fd2fb6a126acb05bc70ecd04f87a28",
+              "submissionPreviewUrl": "https://tally.so/forms/VLgZQa/submissions/bZGyDK0/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJiWkd5REswIiwiZm9ybUlkIjoiVkxnWlFhIiwiaWF0IjoxNzkwMTk4NDAxfQ.lZ9_dgjP4negUTuyNiO0M5lJnHO5ACzczHw2J0IRFlE&signature=53f3cf270a6975e07c3568c259aee18061fd2fb6a126acb05bc70ecd04f87a28",
+              "fields": [
+                {
+                  "key": "question_oVV0q5",
+                  "label": "Full Name",
+                  "type": "INPUT_TEXT",
+                  "value": "Nneka Ezeh"
+                },
+                {
+                  "key": "question_GBBoZQ",
+                  "label": "Email Address",
+                  "type": "INPUT_EMAIL",
+                  "value": "nnekaezeh3@gmail.com"
+                },
+                {
+                  "key": "question_OBBj6k",
+                  "label": "Budget",
+                  "type": "INPUT_NUMBER",
+                  "value": 350000
+                },
+                {
+                  "key": "question_V119KN",
+                  "label": "Message",
+                  "type": "TEXTAREA",
+                  "value": "I want to rent a one bedroom apartment in Ajah."
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://nneka1ezeh.app.n8n.cloud/webhook-test/lead-qualifier",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "form_submitted1": [
+      {
+        "json": {
+          "headers": {
+            "host": "nneka1ezeh.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1352",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "baggage": "sentry-environment=production,sentry-release=005f3d3fc6d44e1f888de668e0c87cff264874dc,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=b9553e409b5d40efbce12cac6050c148,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.18327696653591252,sentry-sample_rate=0",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.62.78",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "BE",
+            "cf-ray": "a3fc974ba9f913f4-CDG",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "b9553e409b5d40efbce12cac6050c148-99e234b342ef1474-0",
+            "x-forwarded-for": "34.96.62.78, 104.23.229.94",
+            "x-forwarded-host": "nneka1ezeh.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-71-84c76fc7d-vjdwg",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.62.78"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "812346f8-022a-4ffd-af87-d4650ecd4819",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2026-09-23T21:20:01.764Z",
+            "data": {
+              "responseId": "bZGyDK0",
+              "submissionId": "bZGyDK0",
+              "respondentId": "ob8Kk9X",
+              "formId": "VLgZQa",
+              "formName": "Property Inquiry",
+              "createdAt": "2026-09-23T21:20:01.000Z",
+              "submissionPdfUrl": "https://api.tally.so/forms/VLgZQa/submissions/bZGyDK0/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJiWkd5REswIiwiZm9ybUlkIjoiVkxnWlFhIiwiaWF0IjoxNzkwMTk4NDAxfQ.lZ9_dgjP4negUTuyNiO0M5lJnHO5ACzczHw2J0IRFlE&signature=53f3cf270a6975e07c3568c259aee18061fd2fb6a126acb05bc70ecd04f87a28",
+              "submissionPreviewUrl": "https://tally.so/forms/VLgZQa/submissions/bZGyDK0/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJiWkd5REswIiwiZm9ybUlkIjoiVkxnWlFhIiwiaWF0IjoxNzkwMTk4NDAxfQ.lZ9_dgjP4negUTuyNiO0M5lJnHO5ACzczHw2J0IRFlE&signature=53f3cf270a6975e07c3568c259aee18061fd2fb6a126acb05bc70ecd04f87a28",
+              "fields": [
+                {
+                  "key": "question_oVV0q5",
+                  "label": "Full Name",
+                  "type": "INPUT_TEXT",
+                  "value": "Nneka Ezeh"
+                },
+                {
+                  "key": "question_GBBoZQ",
+                  "label": "Email Address",
+                  "type": "INPUT_EMAIL",
+                  "value": "nnekaezeh3@gmail.com"
+                },
+                {
+                  "key": "question_OBBj6k",
+                  "label": "Budget",
+                  "type": "INPUT_NUMBER",
+                  "value": 350000000
+                },
+                {
+                  "key": "question_V119KN",
+                  "label": "Message",
+                  "type": "TEXTAREA",
+                  "value": "I want to rent a one bedroom apartment in Ajah."
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://nneka1ezeh.app.n8n.cloud/webhook-test/lead-qualifier",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "form_submitted": {
+      "main": [
+        [
+          {
+            "node": "extract_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract_data": {
+      "main": [
+        [
+          {
+            "node": "email_is_empty?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_lead": {
+      "main": [
+        [
+          {
+            "node": "auto_reply_lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_budget": {
+      "main": [
+        [
+          {
+            "node": "save_lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "notify_sales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email_is_empty?": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check_budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "form_submitted1": {
+      "main": [
+        [
+          {
+            "node": "extract_data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract_data1": {
+      "main": [
+        [
+          {
+            "node": "email_is_empty?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email_is_empty?1": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send_Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_lead1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message_lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d90f25ee-1afa-4cd5-a033-e0f39745f5f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed9710e29edb3358b828d34a78559ea7261c1d5c4bfa6af842c43b93e69d02df"
+  },
+  "nodeGroups": [],
+  "id": "iCAOJmmPMLY2aT55",
+  "tags": []
+}

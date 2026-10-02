@@ -1,0 +1,481 @@
+{
+  "name": "Lead Qualifier Part 1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-qualifier",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -848,
+        -16
+      ],
+      "id": "34e213a3-5c31-4e09-ad7b-e3e325579b0a",
+      "name": "form_submitted",
+      "webhookId": "7da0b01c-5c8a-4115-aaca-e42dbb104bec"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6735b41b-1850-484c-b1d0-2158745652f8",
+              "name": "name",
+              "value": "={{ $json.body.data.fields[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "6d8db284-e666-476b-803d-43664a1fbd5f",
+              "name": "email",
+              "value": "={{ $json.body.data.fields[1].value }}",
+              "type": "string"
+            },
+            {
+              "id": "a72c139e-799e-4489-aa9e-25f2c8109ccd",
+              "name": "Budget",
+              "value": "={{ $json.body.data.fields[2].value }}",
+              "type": "number"
+            },
+            {
+              "id": "f629844e-a974-4318-acad-1b2ec21ea055",
+              "name": "Message",
+              "value": "={{ $json.body.data.fields[3].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -592,
+        -16
+      ],
+      "id": "28780747-dd48-407f-9f63-35a2dc2ce9ea",
+      "name": "extract_data"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Email address missing"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -112
+      ],
+      "id": "639fd95a-4b0c-4324-aa4b-ba99685f9375",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE",
+          "mode": "list",
+          "cachedResultName": "Lead-Qualifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MYR03ZqQPRDPioZkJUbSpILox9mbAf8POmEKfjqOYLE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Budget": "={{ $json.Budget }}",
+            "Type ": "Standard",
+            "Date": "={{ $now.format('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type ",
+              "displayName": "Type ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        96,
+        -32
+      ],
+      "id": "1fcc6f9e-16e3-4be6-9d70-13a7f45f4bb9",
+      "name": "save_lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ppyg88FWvtCnry72",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=Your Rental Inquiry - Nneka Properties",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Inquiry Update - Nneka Properties</title>\n</head>\n<body style=\"margin: 0; padding: 0; background-color: #f4f5f7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;\">\n  <table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"background-color: #f4f5f7; padding: 40px 15px;\">\n    <tr>\n      <td align=\"center\">\n        <!-- Main Email Container -->\n        <table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"max-width: 580px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb;\">\n          \n          <!-- Brand Header -->\n          <tr>\n            <td style=\"background-color: #111827; padding: 32px 40px; text-align: left; border-bottom: 3px solid #c5a059;\">\n              <span style=\"font-size: 20px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #ffffff; margin: 0; display: block;\">\n                Nneka Properties\n              </span>\n              <span style=\"font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #c5a059; margin-top: 4px; display: block; font-weight: 500;\">\n                VIP Portfolio & Leasing\n              </span>\n            </td>\n          </tr>\n\n          <!-- Message Body -->\n          <tr>\n            <td style=\"padding: 40px; color: #374151; font-size: 15px; line-height: 1.65;\">\n              <p style=\"margin: 0 0 18px 0; font-size: 16px; font-weight: 600; color: #111827;\">\n                Dear {{ $json.Name }},\n              </p>\n\n              <p style=\"margin: 0 0 16px 0;\">\n                Thank you for your inquiry. Regarding your monthly rent budget of \n                <strong style=\"color: #111827;\">{{ $json.Budget.toLocaleString('en-US', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }) }}</strong>, \n                our <em>Nneka Properties VIP portfolio</em> currently requires a higher minimum threshold.\n              </p>\n\n              <p style=\"margin: 0 0 28px 0; color: #4b5563;\">\n                We recommend reviewing our FAQ page and Getting Started resources on our website for standard leasing criteria and helpful market tips.\n              </p>\n\n              <!-- Action Links -->\n              <table role=\"presentation\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin: 0 0 32px 0;\">\n                <tr>\n                  <td align=\"center\" style=\"border-radius: 6px; background-color: #111827;\">\n                    <a href=\"https://nnekaproperties.com/leasing-criteria\" target=\"_blank\" style=\"font-size: 13px; font-weight: 600; color: #ffffff; text-decoration: none; padding: 12px 20px; display: inline-block; border-radius: 6px; letter-spacing: 0.3px;\">\n                      View Leasing Criteria\n                    </a>\n                  </td>\n                  <td width=\"12\"></td>\n                  <td align=\"center\" style=\"border-radius: 6px; border: 1px solid #d1d5db;\">\n                    <a href=\"https://nnekaproperties.com/faq\" target=\"_blank\" style=\"font-size: 13px; font-weight: 600; color: #374151; text-decoration: none; padding: 11px 19px; display: inline-block; border-radius: 6px;\">\n                      Read FAQs\n                    </a>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- Sign-off -->\n              <p style=\"margin: 0; padding-top: 16px; border-top: 1px solid #f3f4f6; color: #6b7280; font-size: 14px;\">\n                Best regards,<br>\n                <strong style=\"color: #111827;\">Agent Success</strong><br>\n                Nneka Properties\n              </p>\n            </td>\n          </tr>\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"background-color: #fafafa; padding: 20px 40px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #9ca3af;\">\n              <p style=\"margin: 0;\">\n                © 2026 Nneka Properties. All rights reserved.\n              </p>\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -32
+      ],
+      "id": "df39af5e-f186-4833-a54f-841e018ceea9",
+      "name": "auto_reply_lead",
+      "webhookId": "1c305c30-03c4-46a2-9384-984b161b34bf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LGu3sEFycv25K3IB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AB7E8GR17",
+          "mode": "list",
+          "cachedResultName": "all-new-workspace"
+        },
+        "text": "=New VIP Lead\n-name: {{ $json.name }}\n-email: {{ $json.email }}\n-budget: {{ $json.Budget }}\n-message: {{ $json.Message }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        96,
+        160
+      ],
+      "id": "e30b45a8-06ce-4bd7-b721-acb97c592f45",
+      "name": "notify_sales",
+      "webhookId": "2a7092a5-80af-4a1c-ae80-326cea02b8be",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "hvAacv1J9dOPyCzS",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Budget }}",
+                    "rightValue": 20000000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    },
+                    "id": "6537846b-66c7-4bb4-9c0a-7d831ca9a5ae"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Standard"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "49a673d9-b9b2-406e-ac68-c96c5ff4f012",
+                    "leftValue": "={{ $json.Budget }}",
+                    "rightValue": 20000000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VIP"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        80
+      ],
+      "id": "66f9a5ef-8169-431d-bf2c-b841e0a16b55",
+      "name": "check_budget"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "02df93e0-2a16-415c-9e1b-4982daaa6a14",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -368,
+        -16
+      ],
+      "id": "8a0d0deb-87b7-443b-9bdd-06fa9f8c61b1",
+      "name": "email_is_empty?"
+    }
+  ],
+  "pinData": {
+    "form_submitted": [
+      {
+        "json": {
+          "headers": {
+            "host": "nneka1ezeh.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1352",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "baggage": "sentry-environment=production,sentry-release=005f3d3fc6d44e1f888de668e0c87cff264874dc,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=b9553e409b5d40efbce12cac6050c148,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.18327696653591252,sentry-sample_rate=0",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.62.78",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "BE",
+            "cf-ray": "a3fc974ba9f913f4-CDG",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "b9553e409b5d40efbce12cac6050c148-99e234b342ef1474-0",
+            "x-forwarded-for": "34.96.62.78, 104.23.229.94",
+            "x-forwarded-host": "nneka1ezeh.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-71-84c76fc7d-vjdwg",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.62.78"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "812346f8-022a-4ffd-af87-d4650ecd4819",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2026-09-23T21:20:01.764Z",
+            "data": {
+              "responseId": "bZGyDK0",
+              "submissionId": "bZGyDK0",
+              "respondentId": "ob8Kk9X",
+              "formId": "VLgZQa",
+              "formName": "Property Inquiry",
+              "createdAt": "2026-09-23T21:20:01.000Z",
+              "submissionPdfUrl": "https://api.tally.so/forms/VLgZQa/submissions/bZGyDK0/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJiWkd5REswIiwiZm9ybUlkIjoiVkxnWlFhIiwiaWF0IjoxNzkwMTk4NDAxfQ.lZ9_dgjP4negUTuyNiO0M5lJnHO5ACzczHw2J0IRFlE&signature=53f3cf270a6975e07c3568c259aee18061fd2fb6a126acb05bc70ecd04f87a28",
+              "submissionPreviewUrl": "https://tally.so/forms/VLgZQa/submissions/bZGyDK0/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJiWkd5REswIiwiZm9ybUlkIjoiVkxnWlFhIiwiaWF0IjoxNzkwMTk4NDAxfQ.lZ9_dgjP4negUTuyNiO0M5lJnHO5ACzczHw2J0IRFlE&signature=53f3cf270a6975e07c3568c259aee18061fd2fb6a126acb05bc70ecd04f87a28",
+              "fields": [
+                {
+                  "key": "question_oVV0q5",
+                  "label": "Full Name",
+                  "type": "INPUT_TEXT",
+                  "value": "Nneka Ezeh"
+                },
+                {
+                  "key": "question_GBBoZQ",
+                  "label": "Email Address",
+                  "type": "INPUT_EMAIL",
+                  "value": "nnekaezeh3@gmail.com"
+                },
+                {
+                  "key": "question_OBBj6k",
+                  "label": "Budget",
+                  "type": "INPUT_NUMBER",
+                  "value": 350000
+                },
+                {
+                  "key": "question_V119KN",
+                  "label": "Message",
+                  "type": "TEXTAREA",
+                  "value": "I want to rent a one bedroom apartment in Ajah."
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://nneka1ezeh.app.n8n.cloud/webhook-test/lead-qualifier",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "form_submitted": {
+      "main": [
+        [
+          {
+            "node": "extract_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract_data": {
+      "main": [
+        [
+          {
+            "node": "email_is_empty?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_lead": {
+      "main": [
+        [
+          {
+            "node": "auto_reply_lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_budget": {
+      "main": [
+        [
+          {
+            "node": "save_lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "notify_sales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email_is_empty?": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check_budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2990e3e1-539f-4d06-9a19-5e4c37948d0a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed9710e29edb3358b828d34a78559ea7261c1d5c4bfa6af842c43b93e69d02df"
+  },
+  "nodeGroups": [],
+  "id": "6go4JKOzlaP7b6FM",
+  "tags": []
+}

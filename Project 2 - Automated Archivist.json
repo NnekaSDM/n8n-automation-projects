@@ -1,0 +1,381 @@
+{
+  "name": "Project 2 - Automated Archivist",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "has:attachment subject:invoice"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -336,
+        -48
+      ],
+      "id": "b2bc22b1-7806-46ff-9a50-3d47b835c748",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LGu3sEFycv25K3IB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "975dd420-551d-4849-9f3c-04872796d7c8",
+              "leftValue": "={{ $binary.attachment_0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -96,
+        -48
+      ],
+      "id": "99a803ab-b2ce-438d-9055-837983d95340",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "849ebc80-2c12-4f45-a17e-1f5a3ffb55a7",
+              "name": "file_name",
+              "value": "=Invoice_{{$('Gmail Trigger').item.json.to.value[0].name }}_{{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "1c009872-5583-4340-b254-d547e2d154dd",
+              "name": "attachment",
+              "value": "={{ $binary.attachment_0 }}",
+              "type": "binary"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        144,
+        -96
+      ],
+      "id": "65b0d5df-5b19-417a-b153-8203b29f0431",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "attachment",
+        "name": "={{ $json.file_name }}",
+        "driveId": {
+          "__rl": true,
+          "value": "19lo2rOEuKoiOc70wN_ghrELwIuot2w0Z",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        416,
+        -176
+      ],
+      "id": "7ee5c657-e69f-4574-a452-409028594764",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "onPzIPZNMEdfPas8",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "inputType": "binary",
+        "binaryPropertyName": "attachment",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        16
+      ],
+      "id": "de8dd77b-3c3e-4849-ac04-9222fb0326e7",
+      "name": "Analyze document",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TwL300jjNth5sdBC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=extract the 'from company name, invoice description, date and total amount into JSON Key-Value pairs:'{{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        16
+      ],
+      "id": "3bcedd14-57d5-446c-8b95-69a7656d33f3",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TwL300jjNth5sdBC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const rawText = item.json?.content?.parts?.[0]?.text ?? '';\n\n  // Strip markdown code fences (```json and ```) and whitespace\n  const cleanJsonString = rawText\n    .replace(/^```(?:json)?\\s*/i, '')\n    .replace(/\\s*```$/, '')\n    .trim();\n\n  let parsedData = {};\n  try {\n    parsedData = JSON.parse(cleanJsonString);\n\n    // If invoice_description is returned as an array/list, convert it to plain text\n    if (Array.isArray(parsedData.invoice_description)) {\n      parsedData.invoice_description = parsedData.invoice_description\n        .map(entry => (typeof entry === 'object' ? JSON.stringify(entry) : String(entry)))\n        .join(', ');\n    } else if (typeof parsedData.invoice_description !== 'string') {\n      parsedData.invoice_description = String(parsedData.invoice_description ?? '');\n    }\n  } catch (error) {\n    parsedData = { error: 'Failed to parse JSON', raw: rawText };\n  }\n\n  return {\n    json: parsedData\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        16
+      ],
+      "id": "060cebca-be84-41e2-a26c-2631e42213bc",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16g-t85x4XK7O2hDQJNFrP1YZahWu85HnbpB6oxnhZJY",
+          "mode": "list",
+          "cachedResultName": "invoices",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16g-t85x4XK7O2hDQJNFrP1YZahWu85HnbpB6oxnhZJY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16g-t85x4XK7O2hDQJNFrP1YZahWu85HnbpB6oxnhZJY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company": "={{ $json.from_company_name }}",
+            "Description": "={{ $json.invoice_description }}",
+            "Date": "={{ $json.date }}",
+            "Amount": "={{ $json.total_amount }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        16
+      ],
+      "id": "302cf6e6-b51e-44f9-acde-002ac7b3c957",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ppyg88FWvtCnry72",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Analyze document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze document": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5188ae77-d787-4e12-9035-30f0ff4118e6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed9710e29edb3358b828d34a78559ea7261c1d5c4bfa6af842c43b93e69d02df"
+  },
+  "nodeGroups": [],
+  "id": "eH9GuIpmSxZMuHgI",
+  "tags": []
+}
