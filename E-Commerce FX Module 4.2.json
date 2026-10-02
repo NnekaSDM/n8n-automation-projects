@@ -1,0 +1,304 @@
+{
+  "name": "E-Commerce FX Module 4.2",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1312,
+        -80
+      ],
+      "id": "4dd130e6-38be-4b04-9af4-eeea497eb35a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://v6.exchangerate-api.com/v6/275ac5e149a471f7895540ad/latest/USD",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -1040,
+        -80
+      ],
+      "id": "17926174-2ca3-41db-b4da-bcd825245f9f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BfLrnHMr0AxsAaZZoNQKlobkXDdEUNxpLwerUzt5v5I",
+          "mode": "list",
+          "cachedResultName": "e-commerce products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BfLrnHMr0AxsAaZZoNQKlobkXDdEUNxpLwerUzt5v5I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 11861914,
+          "mode": "list",
+          "cachedResultName": "Gadgets-Grid view",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BfLrnHMr0AxsAaZZoNQKlobkXDdEUNxpLwerUzt5v5I/edit#gid=11861914"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -544,
+        -80
+      ],
+      "id": "ca469612-3da4-4d7e-8a3b-40b3e3d0c64c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H7Imohd1jUsKNyD3",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd00a6b7-d80d-4007-a54e-47c3301deb1d",
+              "name": "conversion-rate",
+              "value": "={{ $json.conversion_rates.NGN }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -768,
+        -80
+      ],
+      "id": "09ac18b1-6a44-4ee2-9407-9f0084e54510",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1BfLrnHMr0AxsAaZZoNQKlobkXDdEUNxpLwerUzt5v5I",
+          "mode": "list",
+          "cachedResultName": "e-commerce products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BfLrnHMr0AxsAaZZoNQKlobkXDdEUNxpLwerUzt5v5I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 11861914,
+          "mode": "list",
+          "cachedResultName": "Gadgets-Grid view",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BfLrnHMr0AxsAaZZoNQKlobkXDdEUNxpLwerUzt5v5I/edit#gid=11861914"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            " ₦ Naira-price": "={{ $('Edit Fields').item.json[\"conversion-rate\"] * $json[\"$ base-price\"] }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Product-name",
+              "displayName": "Product-name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "$ base-price",
+              "displayName": "$ base-price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": " ₦ Naira-price",
+              "displayName": " ₦ Naira-price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        64
+      ],
+      "id": "11296bf3-8ea3-46fb-8033-5d7d046bb3a2",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H7Imohd1jUsKNyD3",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -256,
+        -80
+      ],
+      "id": "f25c1ade-7e22-4391-888b-764526d2a4c7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        80
+      ],
+      "id": "38804ea4-3904-4c20-8932-624dcd824976",
+      "name": "Wait",
+      "webhookId": "a4a301a0-43d1-4ae8-bdf6-7404c6754fad"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0e72f8d9-9130-4807-929e-4854b6dc97e9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b79e642ac46a8e7ac14e3d3937d3db855fb317d44a50897bb43e8ee658085d1c"
+  },
+  "nodeGroups": [],
+  "id": "zP39RZMRa5pF0fgb",
+  "tags": []
+}
